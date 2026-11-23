@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistem Bank Soal 5 Bentuk Asesmen — Kisi-Kisi & Kartu Soal</title>
+  <title>Sistem Bank Soal Multi-Mapel & AI Gemini — Kisi-Kisi & Kartu Soal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap');
@@ -77,8 +77,8 @@
           BS
         </div>
         <div>
-          <h1 class="text-base font-bold leading-tight">Bank Soal Multi-Mapel & 5 Bentuk Soal</h1>
-          <p class="text-xs text-slate-400">BS • PG • PG Kompleks • Menjodohkan • Esai Singkat</p>
+          <h1 class="text-base font-bold leading-tight">Bank Soal Multi-Mapel + AI Gemini</h1>
+          <p class="text-xs text-slate-400">CP/ATP • Kisi-Kisi • Naskah Soal • Kartu Soal</p>
         </div>
       </div>
 
@@ -138,7 +138,7 @@
 
       <div class="lg:col-span-3 flex items-center gap-2.5 text-xs text-slate-600 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
         <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span>
-        <span id="status-text">Mode Lokal — 5 Bentuk Soal Aktif</span>
+        <span id="status-text">Mode Lokal — AI Gemini siap</span>
       </div>
     </div>
   </section>
@@ -191,11 +191,33 @@
           </button>
         </div>
 
-        <!-- Form Tambah Butir Soal -->
+        <!-- Form Tambah Butir Soal + Asisten AI Gemini -->
         <div class="lg:col-span-2 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-          <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wide border-b pb-2 mb-4">
-            Tambah Butir Soal untuk Paket <span id="label-form-paket" class="text-emerald-700 font-mono">INF-XI-AGUS</span>
-          </h2>
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2 mb-4">
+            <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wide">
+              Tambah Butir Soal — <span id="label-form-paket" class="text-emerald-700 font-mono">INF-XI-AGUS</span>
+            </h2>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" onclick="aiGenerateCpAtp()" id="btn-ai-cpatp"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm transition">
+                ✨ Susun CP & ATP
+              </button>
+              <button type="button" onclick="aiGenerateSoal()" id="btn-ai-soal"
+                class="bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm transition">
+                ✨ Buat Indikator & Soal
+              </button>
+            </div>
+          </div>
+
+          <!-- Kotak Referensi ATP Hasil Gemini -->
+          <div id="box-atp-ai" class="hidden mb-4 p-3 rounded-lg bg-indigo-50 border border-indigo-200 text-xs text-indigo-950">
+            <div class="flex justify-between items-center font-bold mb-1">
+              <span>Draf Alur Tujuan Pembelajaran (ATP) dari Gemini:</span>
+              <button type="button" onclick="document.getElementById('box-atp-ai').classList.add('hidden')" class="text-indigo-700 hover:underline">Tutup</button>
+            </div>
+            <ol id="list-atp-ai" class="list-decimal pl-5 space-y-0.5"></ol>
+          </div>
+
           <form id="form-soal" onsubmit="addSoal(event)" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
@@ -257,7 +279,6 @@
                 <input type="text" id="in-opsi-e" placeholder="Opsi E" class="text-sm border rounded px-2.5 py-1 bg-white">
               </div>
 
-              <!-- Kunci PG Tunggal -->
               <div id="sub-kunci-pg" class="flex items-center gap-2 pt-1 border-t border-slate-200">
                 <label class="text-xs font-bold text-slate-700">Kunci Jawaban PG (1 Jawaban):</label>
                 <select id="in-kunci-pg" class="text-sm border rounded px-3 py-1 bg-white font-semibold">
@@ -269,7 +290,6 @@
                 </select>
               </div>
 
-              <!-- Kunci PG Kompleks (2 Jawaban Benar) -->
               <div id="sub-kunci-pgk" class="hidden pt-1 border-t border-slate-200">
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Tepat 2 Kunci Jawaban Benar (PG Kompleks):</label>
                 <div class="flex flex-wrap gap-4 text-sm">
@@ -294,7 +314,7 @@
 
             <!-- FIELD 4: MENJODOHKAN -->
             <div id="box-menjodohkan" class="hidden space-y-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <div class="text-xs font-bold text-slate-700 mb-1">Pasangan Premis (Kiri) dan Respon / Jawaban (Kanan) — Isi minimal 3 pasangan:</div>
+              <div class="text-xs font-bold text-slate-700 mb-1">Pasangan Premis (Kiri) dan Respon / Jawaban (Kanan):</div>
               <div class="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-500 px-1">
                 <span>Premis / Pernyataan (1, 2, 3, 4)</span>
                 <span>Pasangan Jawaban Benar (A, B, C, D)</span>
@@ -313,8 +333,8 @@
 
             <!-- FIELD 5: ESAI (JAWABAN SINGKAT) -->
             <div id="box-esai-singkat" class="hidden bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <label class="block text-xs font-bold text-slate-700 mb-1">Kunci Jawaban Singkat (Kata / Frasa / Angka Pasti)</label>
-              <input type="text" id="in-kunci-esai" placeholder="Contoh: LIFO / Stack / O(n log n)" class="w-full text-sm border rounded-lg px-3 py-1.5 bg-white">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Kunci Jawaban Singkat</label>
+              <input type="text" id="in-kunci-esai" placeholder="Contoh: LIFO / Stack" class="w-full text-sm border rounded-lg px-3 py-1.5 bg-white">
             </div>
 
             <div class="flex justify-end pt-2">
@@ -684,10 +704,10 @@
       const txt = document.getElementById('status-text');
       if (gasUrl) {
         dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0";
-        txt.textContent = "Terhubung ke Google Sheets";
+        txt.textContent = "Terhubung ke Apps Script & Gemini";
       } else {
         dot.className = "w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0";
-        txt.textContent = "Mode Lokal — 5 Bentuk Soal Aktif";
+        txt.textContent = "Mode Lokal — Masukkan URL Apps Script untuk AI";
       }
     }
 
@@ -737,6 +757,138 @@
         });
       } catch (e) {
         console.error(e);
+      }
+    }
+
+    async function postJsonWithResponse(payloadObj) {
+      if (!gasUrl) {
+        throw new Error("Masukkan URL Web App Google Apps Script terlebih dahulu.");
+      }
+      const res = await fetch(gasUrl, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payloadObj)
+      });
+      const json = await res.json();
+      if (json.status !== "success") {
+        throw new Error(json.message || "Gagal memproses permintaan AI.");
+      }
+      return json.result;
+    }
+
+    async function aiGenerateCpAtp() {
+      const p = getActivePaket();
+      const materi = document.getElementById('in-materi').value.trim();
+      if (!materi) {
+        alert("Isi terlebih dahulu kolom Elemen / Materi Pokok sebelum menyusun CP & ATP.");
+        return;
+      }
+
+      const btn = document.getElementById('btn-ai-cpatp');
+      const prevText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = "⏳ Menyusun CP & ATP...";
+
+      try {
+        const result = await postJsonWithResponse({
+          action: "aiGenerateCpAtp",
+          mapel: p.mapel,
+          kelas: p.kelas,
+          materi: materi
+        });
+
+        if (result.cp) {
+          document.getElementById('in-cp').value = result.cp;
+        }
+        if (Array.isArray(result.atp) && result.atp.length > 0) {
+          const listEl = document.getElementById('list-atp-ai');
+          listEl.innerHTML = result.atp.map(step => `<li>${step}</li>`).join('');
+          document.getElementById('box-atp-ai').classList.remove('hidden');
+        }
+      } catch (err) {
+        alert("Error AI CP/ATP: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = prevText;
+      }
+    }
+
+    async function aiGenerateSoal() {
+      const p = getActivePaket();
+      const materi = document.getElementById('in-materi').value.trim();
+      const level = document.getElementById('in-level').value;
+      const bentuk = document.getElementById('in-bentuk').value;
+      const indikatorAcuan = document.getElementById('in-indikator').value.trim();
+
+      if (!materi) {
+        alert("Isi terlebih dahulu kolom Elemen / Materi Pokok sebelum membuat soal dengan AI.");
+        return;
+      }
+
+      const btn = document.getElementById('btn-ai-soal');
+      const prevText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = "⏳ Membuat Soal...";
+
+      try {
+        const result = await postJsonWithResponse({
+          action: "aiGenerateSoal",
+          mapel: p.mapel,
+          kelas: p.kelas,
+          materi: materi,
+          level: level,
+          bentuk: bentuk,
+          indikator: indikatorAcuan
+        });
+
+        if (result.cp && !document.getElementById('in-cp').value.trim()) {
+          document.getElementById('in-cp').value = result.cp;
+        }
+        if (result.indikator) {
+          document.getElementById('in-indikator').value = result.indikator;
+        }
+        if (result.pertanyaan) {
+          document.getElementById('in-pertanyaan').value = result.pertanyaan;
+        }
+
+        if (bentuk === 'Benar-Salah') {
+          const k = (result.kunci || "BENAR").toUpperCase();
+          document.getElementById('in-kunci-bs').value = k.includes("SALAH") ? "SALAH" : "BENAR";
+        } else if (bentuk === 'PG') {
+          document.getElementById('in-opsi-a').value = result.opsiA || "";
+          document.getElementById('in-opsi-b').value = result.opsiB || "";
+          document.getElementById('in-opsi-c').value = result.opsiC || "";
+          document.getElementById('in-opsi-d').value = result.opsiD || "";
+          document.getElementById('in-opsi-e').value = result.opsiE || "";
+          const huruf = (result.kunci || "A").trim().charAt(0).toUpperCase();
+          if (["A", "B", "C", "D", "E"].includes(huruf)) {
+            document.getElementById('in-kunci-pg').value = huruf;
+          }
+        } else if (bentuk === 'PG Kompleks') {
+          document.getElementById('in-opsi-a').value = result.opsiA || "";
+          document.getElementById('in-opsi-b').value = result.opsiB || "";
+          document.getElementById('in-opsi-c').value = result.opsiC || "";
+          document.getElementById('in-opsi-d').value = result.opsiD || "";
+          document.getElementById('in-opsi-e').value = result.opsiE || "";
+          const keys = (result.kunci || "").toUpperCase().match(/[A-E]/g) || [];
+          document.querySelectorAll('input[name="pgk-kunci"]').forEach(cb => {
+            cb.checked = keys.slice(0, 2).includes(cb.value);
+          });
+        } else if (bentuk === 'Menjodohkan') {
+          let pairs = [];
+          try { pairs = JSON.parse(result.opsiA); } catch (e) { pairs = []; }
+          for (let i = 1; i <= 4; i++) {
+            document.getElementById('mj-p' + i).value = pairs[i - 1]?.premis || "";
+            document.getElementById('mj-j' + i).value = pairs[i - 1]?.respon || "";
+          }
+        } else if (bentuk === 'Esai Singkat') {
+          document.getElementById('in-kunci-esai').value = result.kunci || "";
+        }
+      } catch (err) {
+        alert("Error AI Soal: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = prevText;
       }
     }
 
@@ -842,7 +994,6 @@
       renderAll();
     }
 
-    // Helper merender badan soal (opsi / tabel BS / menjodohkan / garis jawaban singkat)
     function renderSoalBodyHtml(s) {
       if (s.bentuk === 'Benar-Salah') {
         return `
