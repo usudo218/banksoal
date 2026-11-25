@@ -448,6 +448,8 @@
   </main>
 
   <script>
+    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzRn-_Us0dNSSrEmysGGsMdaobYfZZMX1ws90yMfkVN9m2cLN8muBWilmgahG6jlwzK/exec";
+
     const defaultPaketList = [
       {
         kode_paket: "INF-XI-AGUS",
@@ -540,15 +542,22 @@
     let paketList = JSON.parse(localStorage.getItem('bs_v2_paket')) || defaultPaketList;
     let activeKode = localStorage.getItem('bs_v2_active') || paketList[0].kode_paket;
     let bankSoal = JSON.parse(localStorage.getItem('bs_v2_soal')) || defaultSoal;
-    let gasUrl = localStorage.getItem('bs_gas_url') || "";
+    let gasUrl = localStorage.getItem('bs_gas_url') || DEFAULT_GAS_URL;
 
-    window.onload = () => {
+    window.onload = async () => {
+      if (!localStorage.getItem('bs_gas_url') && DEFAULT_GAS_URL) {
+        localStorage.setItem('bs_gas_url', DEFAULT_GAS_URL);
+        gasUrl = DEFAULT_GAS_URL;
+      }
       document.getElementById('gasUrl').value = gasUrl;
       updateConnectionBadge();
       populatePaketDropdown();
       loadActivePaketToInputs();
       toggleOpsiField();
       renderAll();
+      if (gasUrl) {
+        await syncFromSpreadsheet({ silent: true });
+      }
     };
 
     function getActivePaket() {
@@ -674,7 +683,9 @@
     }
 
     function saveGasUrl() {
-      gasUrl = document.getElementById('gasUrl').value.trim();
+      const val = document.getElementById('gasUrl').value.trim();
+      gasUrl = val || DEFAULT_GAS_URL;
+      document.getElementById('gasUrl').value = gasUrl;
       localStorage.setItem('bs_gas_url', gasUrl);
       updateConnectionBadge();
       if (gasUrl) syncFromSpreadsheet();
@@ -692,12 +703,14 @@
       }
     }
 
-    async function syncFromSpreadsheet() {
+    async function syncFromSpreadsheet(options = {}) {
+      const silent = Boolean(options.silent);
       if (!gasUrl) {
-        alert("Masukkan URL Web App Google Apps Script terlebih dahulu.");
+        if (!silent) alert("Masukkan URL Web App Google Apps Script terlebih dahulu.");
         return;
       }
       const btn = document.getElementById('btn-sync');
+      const prevBtn = btn.innerHTML;
       btn.innerHTML = "⏳ Menyinkronkan...";
       try {
         const res = await fetch(gasUrl);
@@ -718,12 +731,16 @@
           populatePaketDropdown();
           loadActivePaketToInputs();
           renderAll();
-          alert("Sinkronisasi berhasil! Total " + bankSoal.length + " soal dimuat.");
+          if (!silent) {
+            alert("Sinkronisasi berhasil! Total " + bankSoal.length + " soal dimuat.");
+          }
         }
       } catch (err) {
-        alert("Gagal sinkronisasi. Pastikan Web App di-deploy dengan akses 'Anyone'.");
+        if (!silent) {
+          alert("Gagal sinkronisasi. Pastikan Web App di-deploy dengan akses 'Anyone'.");
+        }
       } finally {
-        btn.innerHTML = "<span>🔄</span> Sinkron Sheets";
+        btn.innerHTML = prevBtn;
       }
     }
 
